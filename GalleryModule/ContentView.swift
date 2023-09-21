@@ -8,7 +8,7 @@
 import SwiftUI
 import Photos
 
-// fetch criter -> sorting, predicate, media Type, mediaSubType
+// fetch critera -> sorting, predicate, media Type, mediaSubType
 // loading criteria -> image quality, asynchronusly, image size(width, height), contentMode
 
 
@@ -28,7 +28,7 @@ struct RequestCriteria{
 
 struct ContentView: View {
     
-    @State var allPhotos: [UIImage] = []
+    @State var allPhotos: [Int : UIImage] = [:]
     @State var count = 0
     var req = RequestCriteria()
     
@@ -38,12 +38,12 @@ struct ContentView: View {
             
             ScrollView(.vertical) {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: 100))]) {
-                                ForEach(allPhotos.indices, id: \.self) { index in
+                    ForEach(allPhotos.keys.sorted(), id: \.self) { index in
                                     VStack {
-                                        Image(uiImage: allPhotos[index])
+                                        Image(uiImage: allPhotos[index]!)
                                             .resizable()
                                             .scaledToFit()
-                                        Text("\(index + 1)")
+                                      //  Text("\(index + 1)")
                                     }
                                 }
                             }
@@ -85,7 +85,7 @@ struct ContentView: View {
     func getAllLocalImages(){
         
     
-                
+              // different fetching options
                 let fetchOptions = PHFetchOptions()
                 
         fetchOptions.fetchLimit = req.fetchLimit!
@@ -93,9 +93,22 @@ struct ContentView: View {
         fetchOptions.includeAssetSourceTypes = .typeUserLibrary // default
         fetchOptions.includeHiddenAssets = req.includeHiddenAssets!
                // fetchOptions.wantsIncrementalChangeDetails = true
-                
-//                fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
+
+        // different sorting options
         fetchOptions.sortDescriptors = [Sort.byCreationDateAscending.sortDescriptor, Sort.byIsFavoriteAscending.sortDescriptor]
+        
+      
+        let oneWeek = Date().addingTimeInterval( -60)
+        let format =  " \(Predicate.AssetKeys.mediaType.rawValue) == %d && \(Predicate.AssetKeys.creationDate.rawValue) < %@ "
+        
+        let arguments = [PHAssetMediaType.image.rawValue, oneWeek] as [Any]
+        let predicateObject = Predicate(format, arguments)
+       
+     
+//        fetchOptions.predicate =  NSPredicate(format: " (creationDate < %@) || (mediaType == %d)", [oneWeek as CVarArg, PHAssetMediaType.image.rawValue] as [Any])
+        fetchOptions.predicate =  NSPredicate(format: " mediaType == %d || creationDate < %@",  [PHAssetMediaType.image.rawValue, oneWeek] )
+        fetchOptions.predicate = NSPredicate(format: predicateObject.getPredicateString()!, argumentArray: predicateObject.getArguments())
+        
                 //MARK: Fetches all the images along with gifs first frame, duplicates from each folder in PhotoLibraru
 //                let results = PHAsset.fetchAssets(with: .image, options: fetchOptions)
 //
@@ -111,22 +124,34 @@ struct ContentView: View {
                 let albums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
                 
                // print(albums.firstObject?.localizedTitle)
-                
-                albums.enumerateObjects { album, index, stop in
-                    print(album.description)
+        
+                albums.enumerateObjects { album, albumIndex, stop in
+                   // print(albumIndex)
                     
                     let results = PHAsset.fetchAssets(in: album, options: fetchOptions)
-                    
-                    results.enumerateObjects { asset, index, stop in
-                        if asset.mediaType == .image{
-                            let options = PHImageRequestOptions()
-                            options.isSynchronous = true
+                  //  print("index is \(results.count)")
+                   // var idx = 0
+                    results.enumerateObjects { asset, assetIndex, stop in
+                        print("asset is\(asset.mediaType.rawValue)")
+                       // if asset.mediaType == .image{
                             
-                            PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: req.width!, height: req.height!), contentMode: .aspectFit, options: options) { image, _ in
-                                allPhotos.append(image!)
+                            // different loading options
+                           // print("is thumb \(PHImageResultIsDegradedKey.)")
+                            let options = PHImageRequestOptions()
+//                            options.isSynchronous = true
+                           
+                            
+                            PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: req.width!, height: req.height!), contentMode: .aspectFit, options: options) { image, info in
                                 
+//                                if let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool {
+//                                        print("is thumb: \(isDegraded)")
+//                                    }
+                               // allPhotos.append(image!)
+                                
+                                allPhotos[assetIndex] = image
+                             //   idx += 1
                             }
-                        }
+                       // }
                     }
                 }
                 
