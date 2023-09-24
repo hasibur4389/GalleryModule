@@ -98,16 +98,55 @@ struct ContentView: View {
         fetchOptions.sortDescriptors = [Sort.byCreationDateAscending.sortDescriptor, Sort.byIsFavoriteAscending.sortDescriptor]
         
       
-        let oneWeek = Date().addingTimeInterval( -60)
-        let format =  " \(Predicate.AssetKeys.mediaType.rawValue) == %d && \(Predicate.AssetKeys.creationDate.rawValue) < %@ "
-        
-        let arguments = [PHAssetMediaType.image.rawValue, oneWeek] as [Any]
-        let predicateObject = Predicate(format, arguments)
+        // User Access
+        var predicate = Predicate()
+        // logic 1
+//        var key = Predicate.AssetKeys.mediaType.rawValue
+//        var comp = Predicate.QueryComparator.equal.rawValue
+//        var specifier = Predicate.QuerySpecifier.integerSpecifier.rawValue
+//        predicate.makePredicateLogic(key: key, comparator: comp, specifier: specifier)
+//        var newString = predicate.getPredicateString()
+//        print("newString is \(newString)")
+//        predicate.addArguments(PHAssetMediaType.image.rawValue)
+//
+//        // logic 2
+//
+//        key = Predicate.AssetKeys.creationDate.rawValue
+//        comp = Predicate.QueryComparator.lessThan.rawValue
+//        specifier = Predicate.QuerySpecifier.objectSpecifier.rawValue
+//        predicate.makePredicateLogic(key: key, comparator: comp, specifier: specifier)
+//        var newString2 = predicate.getPredicateString()
+//        print("newString2 is \(newString2)")
+        let currentTime = Date().addingTimeInterval( -60)
+       // predicate.addArguments(oneWeek as CVarArg)
+        predicate.filterByCreationDate(for: currentTime, condition: .lessThan)
+        predicate.filterByMediaSubtype(for: .photoScreenshot, condition: .equal)
+//        let myPredicate = NSPredicate(format: "mediaSubtypes==%d", argumentArray: [PHAssetMediaSubtype.photoScreenshot.rawValue])
+        // setting the predicates and arguments
+      //  var newString3 = predicate.andConjucnt(firstString: newString!, secondString: newString2!)
+        // final call
+//        predicate.setPredicateString(newString3)
+      //  print(predicate.getPredicateString()!, predicate.getArguments())
+
+//        let oneWeek = Date().addingTimeInterval( -60)
+//        let format =  " \(Predicate.AssetKeys.mediaType.rawValue) == %d && \(Predicate.AssetKeys.creationDate.rawValue) < %@ "
+//
+//        let arguments = [PHAssetMediaType.image.rawValue, oneWeek] as [Any]
+//        let predicateObject = Predicate(format, arguments)
        
      
+//        fetchOptions.predicate = NSPredicate(format: "mediaType==%i AND creationDate<%@", [PHAssetMediaType.image.rawValue, oneWeek] as [Any])
+//        fetchOptions.predicate =  NSPredicate(format: "mediaType==%d",  PHAssetMediaType.image.rawValue)
 //        fetchOptions.predicate =  NSPredicate(format: " (creationDate < %@) || (mediaType == %d)", [oneWeek as CVarArg, PHAssetMediaType.image.rawValue] as [Any])
-        fetchOptions.predicate =  NSPredicate(format: " mediaType == %d || creationDate < %@",  [PHAssetMediaType.image.rawValue, oneWeek] )
-        fetchOptions.predicate = NSPredicate(format: predicateObject.getPredicateString()!, argumentArray: predicateObject.getArguments())
+        
+        if let finalPredicate = predicate.getPredicate() {
+            fetchOptions.predicate = finalPredicate
+        }else{
+            print("predicate found nil")
+        }
+//        fetchOptions.predicate = myPredicate
+      
+////        fetchOptions.predicate = NSPredicate(format: predicateObject.getPredicateString()!, argumentArray: predicateObject.getArguments())
         
                 //MARK: Fetches all the images along with gifs first frame, duplicates from each folder in PhotoLibraru
 //                let results = PHAsset.fetchAssets(with: .image, options: fetchOptions)
@@ -123,34 +162,44 @@ struct ContentView: View {
                 //MARK: only getting the albums, recents Images
                 let albums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: nil)
                 
-               // print(albums.firstObject?.localizedTitle)
+                print(albums.firstObject?.localizedTitle)
         
                 albums.enumerateObjects { album, albumIndex, stop in
-                   // print(albumIndex)
+                    print(albumIndex)
                     
                     let results = PHAsset.fetchAssets(in: album, options: fetchOptions)
-                  //  print("index is \(results.count)")
+                    print("\(album.localizedTitle) has \(results.count) assets")
                    // var idx = 0
                     results.enumerateObjects { asset, assetIndex, stop in
                         print("asset is\(asset.mediaType.rawValue)")
-                       // if asset.mediaType == .image{
-                            
-                            // different loading options
-                           // print("is thumb \(PHImageResultIsDegradedKey.)")
-                            let options = PHImageRequestOptions()
-//                            options.isSynchronous = true
-                           
-                            
+                        // if asset.mediaType == .image{
+                        
+                        //MARK: Gif identifying
+//                        let assetResource = PHAssetResource.assetResources(for: asset)
+//
+//                        let assetUTI = assetResource.first?.originalFilename.lowercased()
+//                        let isGif = assetUTI?.hasSuffix(".gif")
+//                        // different loading options
+//                        print("assetUTI \(assetUTI)")
+                        let options = PHImageRequestOptions()
+                        //                            options.isSynchronous = true
+                        
+                        
+                       // if isGif == true {
                             PHImageManager.default().requestImage(for: asset, targetSize: CGSize(width: req.width!, height: req.height!), contentMode: .aspectFit, options: options) { image, info in
-                                
-//                                if let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool {
-//                                        print("is thumb: \(isDegraded)")
-//                                    }
-                               // allPhotos.append(image!)
-                                
-                                allPhotos[assetIndex] = image
-                             //   idx += 1
-                            }
+                            //
+                            //
+                            //
+                            //                                }
+                            //                                if let isDegraded = info?[PHImageResultIsDegradedKey] as? Bool {
+                            //                                        print("is thumb: \(isDegraded)")
+                            //                                    }
+                            // allPhotos.append(image!)
+                            
+                            allPhotos[assetIndex] = image
+                            //   idx += 1
+                        }
+                   // }
                        // }
                     }
                 }
