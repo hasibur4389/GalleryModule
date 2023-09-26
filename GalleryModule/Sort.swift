@@ -40,7 +40,11 @@ enum Sort {
     // Pixel height
     case byPixelHeightAscending
     case byPixelHeightDescending
-
+    
+    // Size
+    case bySizeAscending
+    case bySizeDescending
+    
     // Is favorite
     case byIsFavoriteAscending
     case byIsFavoriteDescending
@@ -102,7 +106,13 @@ enum Sort {
             return NSSortDescriptor(key: "pixelHeight", ascending: true)
         case .byPixelHeightDescending:
             return NSSortDescriptor(key: "pixelHeight", ascending: false)
-
+        
+         // Size
+        case .bySizeAscending:
+            return NSSortDescriptor(key: "pixelHeight * pixelWidth", ascending: true)
+        case .bySizeDescending:
+            return NSSortDescriptor(key: "pixelHeight * pixelWidth", ascending: false)
+            
         // Is favorite
         case .byIsFavoriteAscending:
             return NSSortDescriptor(key: "isFavorite", ascending: true)
