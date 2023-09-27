@@ -11,7 +11,7 @@ import AVFoundation
 import Photos
 
 
-protocol Media{
+protocol Media {
     var asset: PHAsset { get }
     
    
@@ -19,3 +19,4 @@ protocol Media{
     
     func loadVideoData() -> AVAsset?
 }
+

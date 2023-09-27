@@ -10,7 +10,7 @@ import Foundation
 
 protocol MediaProvider{
     
-    func getMediaData() ->[Media]
+    func getMediaData<T: RequestCriteria>(fetchOptions: T) ->[Int: Media]
     func getCategoryData()
     func getPaginatedMediaData() 
     func getPaginatedCategoryData()

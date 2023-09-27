@@ -16,7 +16,8 @@ struct ContentView: View {
     
     @State var allPhotos: [Int : UIImage] = [:]
     @State var count = 0
-    var localImageProvider = LocalImageProvider()
+    
+    var localImageRequestCriteriaBuilder = RequestCriteriaBuilder()
     
     var body: some View {
         VStack {
@@ -68,17 +69,44 @@ struct ContentView: View {
             }
             
             
-            func getAllLocalImages(){
-                let allMedia = localImageProvider.getMediaData()
-              
-                for media in allMedia{
-                    allPhotos[count] =  media.loadImageData()
-                    count += 1
-                    
-                }
-                
-                }
+            
             }
+        }
+    
+    func getAllLocalImages(){
+
+            //MARK: only getting the albums, recents Images
+//
+        let predicate = Predicate()
+        let currentTime = Date().addingTimeInterval( -7 * 24 * 60 * 60)
+        
+        //MARK: Default filter method calls
+        //  predicate.filterByCreationDate(for: currentTime, condition: .lessThan)
+        //                predicate.filterByMediaSubtype(for: .photoScreenshot, condition: .equal)
+        //                predicate.filterByisFavorite()
+        //
+        //                fetchOptions.predicate = NSPredicate(format: "duration >= %d AND duration <= %d", argumentArray: [7, 15])
+        //                fetchOptions.predicate = NSPredicate(format: "localIdentifier CONTAINS %@", "B35B71C5-A68E-4D9C-92F7-A8D9B2823E28/L0/001")
+        
+        predicate.makePredicateLogic(key: .duration, comparator: .lessThan,  specifier: .intSpecifier)
+        predicate.addArgument(7.0)
+        predicate.andConjunct()
+        predicate.makePredicateLogic(key: .mediaType, comparator: .equal , specifier: .objectSpecifier)
+        predicate.addArgument(PHAssetMediaType.video.rawValue)
+        print(predicate.getPredicateString())
+        
+        
+      
+        let allMedia = localImageRequestCriteriaBuilder.setFetchLimit(0).setHeight(800).setPredicate(predicate).setSortDescriptors(.byCreationDateAscending, .byIsFavoriteAscending).build()
+//                let allMedia = localImageProvider.getMediaData(fetchOptions: localImageRequestCriteria)
+//
+        // here we will push in PHImageRequestOptions
+        for (idx, media) in allMedia{
+            allPhotos[idx] =  media.loadImageData()
+           // print(allPhotos[idx])
+            
+        }
+        
         }
     }
 

@@ -24,8 +24,8 @@ class LocalImageMedia: Media{
     
     func loadImageData() -> UIImage? {
         let options = PHImageRequestOptions()
-            options.isNetworkAccessAllowed = true
-            options.deliveryMode = .highQualityFormat
+//            options.isNetworkAccessAllowed = true
+//            options.deliveryMode = .highQualityFormat
         
         var uiImage = UIImage()
             PHImageManager.default().requestImage(
@@ -37,6 +37,7 @@ class LocalImageMedia: Media{
             }
         return uiImage
     }
+    
     func loadVideoData() -> AVAsset? {
         return AVAsset()
     }
