@@ -30,6 +30,7 @@ struct ContentView: View {
                             Image(uiImage: allPhotos[index]!)
                                 .resizable()
                                 .scaledToFit()
+                               
                             //  Text("\(index + 1)")
                         }
                     }
@@ -88,21 +89,34 @@ struct ContentView: View {
         //                fetchOptions.predicate = NSPredicate(format: "duration >= %d AND duration <= %d", argumentArray: [7, 15])
         //                fetchOptions.predicate = NSPredicate(format: "localIdentifier CONTAINS %@", "B35B71C5-A68E-4D9C-92F7-A8D9B2823E28/L0/001")
         
-        predicate.makePredicateLogic(key: .duration, comparator: .lessThan,  specifier: .intSpecifier)
-        predicate.addArgument(7.0)
-        predicate.andConjunct()
+//        predicate.makePredicateLogic(key: .duration, comparator: .lessThan,  specifier: .intSpecifier)
+//        predicate.addArgument(7.0)
+//        predicate.andConjunct()
         predicate.makePredicateLogic(key: .mediaType, comparator: .equal , specifier: .objectSpecifier)
-        predicate.addArgument(PHAssetMediaType.video.rawValue)
+        predicate.addArgument(PHAssetMediaType.image.rawValue)
+//        predicate.andConjunct()
+//        predicate.makePredicateLogic(key: .mediaType, comparator: .equal, specifier: .objectSpecifier)
+//        predicate.addArgument(PHAssetMediaType.video.rawValue)
+        
         print(predicate.getPredicateString())
         
         
       
-        let allMedia = localImageRequestCriteriaBuilder.setFetchLimit(0).setHeight(800).setPredicate(predicate).setSortDescriptors(.byCreationDateAscending, .byIsFavoriteAscending).build()
+        let allMedia = localImageRequestCriteriaBuilder
+            .setFetchLimit(1000)
+            .setPredicate(predicate)
+            .setSortDescriptors(.byCreationDateAscending)
+            .build()
 //                let allMedia = localImageProvider.getMediaData(fetchOptions: localImageRequestCriteria)
 //
         // here we will push in PHImageRequestOptions
         for (idx, media) in allMedia{
-            allPhotos[idx] =  media.loadImageData()
+            allPhotos[idx] =  localImageRequestCriteriaBuilder
+                .setContentMode(.default)
+                .setIsMaximumSizeImage(false)
+               // .setIsSynchronous(true)
+                .build(media) // to get not thumb but highquality images you have setIsSynchronous to true
+        
            // print(allPhotos[idx])
             
         }

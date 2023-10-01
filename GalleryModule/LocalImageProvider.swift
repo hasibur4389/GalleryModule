@@ -25,17 +25,17 @@ class LocalImageProvider: MediaProvider{
         let fetchAssetCollectionOptions = PHFetchOptions()
         
 //        fetchAssetOptions.sortDescriptors = fetchOptions.sortDescriptors
-        //fetchAssetOptions.sortDescriptors = [Sort.byCreationDateAscending.sortDescriptor]
+        //fetchAssetOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: true)]
         fetchAssetOptions.fetchLimit = fetchOptions.fetchLimit!
         fetchAssetOptions.includeAllBurstAssets = fetchOptions.includeAllBurstAssets!
         fetchAssetOptions.includeHiddenAssets = fetchOptions.includeHiddenAssets!
         // fetchOptions.wantsIncrementalChangeDetails = true
         // fetchOptions.includeAssetSourceTypes
         
-        //fetchAssetOptions.predicate = fetchOptions.predicate.getPredicate()
+        fetchAssetOptions.predicate = fetchOptions.predicate.getPredicate()
        // fetchAssetOptions.predicate = NSPredicate(format: "duration >= %d", argumentArray: [3])
-        
-        let albums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .any, options: fetchAssetOptions)
+       
+        let albums = PHAssetCollection.fetchAssetCollections(with: .smartAlbum, subtype: .smartAlbumUserLibrary, options: fetchAssetCollectionOptions)
         //
         print(albums.count)
         // here we will push in PHFetchOption for asset and for PHFecthOption for assetCollection
@@ -44,9 +44,13 @@ class LocalImageProvider: MediaProvider{
 
         albums.enumerateObjects { album, albumIndex, stop in
             // print(albumIndex)
-            
-            let results = PHAsset.fetchAssets(in: album, options: nil)
+           
+            let results = PHAsset.fetchAssets(in: album, options: fetchAssetOptions)
             print("\(album.localizedTitle) has \(results.count) assets")
+            
+            if album.localizedTitle == fetchOptions.defultAlbumTitle! {
+                print("yess")
+            }
             // var idx = 0
             results.enumerateObjects { [self] asset, assetIndex, stop in
                 //  print("asset is\(asset.mediaType.rawValue)")

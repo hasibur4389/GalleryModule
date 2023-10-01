@@ -7,6 +7,7 @@
 
 import Foundation
 import Photos
+import UIKit
 
 class LocalImageRequestCriteria: RequestCriteria{
  
@@ -56,10 +57,65 @@ class RequestCriteriaBuilder {
         }
         return self
     }
+    
+    func setDefultAlbumTitle(_ title: String) -> Self {
+        requestCriteria.defultAlbumTitle = title
+        return self
+    }
+    
+    
+    // ImageLoading Options
+    func setDeliveryMode(_ deliveryMode: PHImageRequestOptionsDeliveryMode) -> Self {
+        requestCriteria.deliveryMode = deliveryMode
+        return self
+    }
+    
+    func setIsSynchronous(_ isSynchronous: Bool) -> Self {
+        requestCriteria.isSynchronous = isSynchronous
+        return self
+    }
+    func setContentMode(_ contentMode: PHImageContentMode) -> Self {
+        requestCriteria.contentMode = contentMode
+        return self
+    }
+    func setNormalizedCropRect(_ normalizedRect: CGRect) -> Self {
+        requestCriteria.normalizedCropRect = normalizedRect
+        return self
+    }
+    func setIsMaximumSizeImage(_ isMaximumSizeImage: Bool) -> Self {
+        requestCriteria.isMaximumSizeImage = isMaximumSizeImage
+        return self
+    }
+    func setResizeMode(_ resizeMode: PHImageRequestOptionsResizeMode) -> Self {
+        requestCriteria.resizeMode = resizeMode
+        return self
+    }
+    
+    func setVersion(_ version: PHImageRequestOptionsVersion)-> Self {
+        requestCriteria.version = version
+        return self
+    }
+    
+    func setIsNetworkAccessAllowed(_ isNetworkAccessAllowed: Bool) -> Self {
+        requestCriteria.isNetworkAccessAllowed =
+        isNetworkAccessAllowed
+        return self
+    }
+    
+    
+//    func getProgressHandler()-> PHAssetImageProgressHandler{
+//        return requestCriteria.progressHandler!
+//    }
+    
     //func 
     func build() -> [Int: Media] {
         
         let allMedia = localImageProvider.getMediaData(fetchOptions: requestCriteria)
         return allMedia
+    }
+    
+    func build(_ media: Media)-> UIImage {
+        return media.loadImageData(requestCriteria)!
+        
     }
 }

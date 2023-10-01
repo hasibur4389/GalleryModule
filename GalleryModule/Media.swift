@@ -15,7 +15,7 @@ protocol Media {
     var asset: PHAsset { get }
     
    
-    func loadImageData() -> UIImage?
+    func loadImageData<T: RequestCriteria>(_ loadOptions: T) -> UIImage?
     
     func loadVideoData() -> AVAsset?
 }
