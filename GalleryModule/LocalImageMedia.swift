@@ -11,6 +11,7 @@ import Photos
 
 
 class LocalImageMedia: Media{
+    
    
     
  
@@ -22,10 +23,7 @@ class LocalImageMedia: Media{
        // super(self.asset)
     }
     
-   
-    
-    func loadImageData<T>(_ loadOptions: T) -> UIImage? where T : RequestCriteria{
-        
+    func loadImageData<T>(_ loadOptions: T, completion: @escaping (UIImage?) -> Void) where T : RequestCriteria {
         let options = PHImageRequestOptions()
         
         // for image delivery mode can be set to all the three but if i am loading video it can only be opportunistic otherwise nil
@@ -39,17 +37,20 @@ class LocalImageMedia: Media{
 //
        
         
-        var uiImage: UIImage? = nil
+       
         var count = 0
-    
+      
         PHImageManager.default().requestImage(
             for: self.asset,
             targetSize: (loadOptions.isMaximumSizeImage)! == true ? PHImageManagerMaximumSize : CGSize(width: loadOptions.width!, height: loadOptions.height!),
             contentMode: loadOptions.contentMode!,
             options: options) { (image, info) in
-               uiImage = image
-                
-                print(count, self.asset.localIdentifier)
+//                count += 1
+//                print(count)
+               // print(self.asset.localIdentifier)
+               completion(image)
+              
+               
             }
       //  count += 1
  
@@ -63,8 +64,11 @@ class LocalImageMedia: Media{
 //            options: options) { (image, info) in
 //                uiImage = image
 //        }
-        return uiImage
+       
     }
+    
+    
+    
 
     
     

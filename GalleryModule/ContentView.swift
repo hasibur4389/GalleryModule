@@ -103,23 +103,44 @@ struct ContentView: View {
         
       
         let allMedia = localImageRequestCriteriaBuilder
-            .setFetchLimit(1000)
+            .setFetchLimit(2000)
             .setPredicate(predicate)
             .setSortDescriptors(.byCreationDateAscending)
             .build()
 //                let allMedia = localImageProvider.getMediaData(fetchOptions: localImageRequestCriteria)
 //
         // here we will push in PHImageRequestOptions
-        for (idx, media) in allMedia{
-            allPhotos[idx] =  localImageRequestCriteriaBuilder
+      
+         
+        for (idx, media) in allMedia.enumerated(){
+            
+          //  dispatchGroup.enter()
+            localImageRequestCriteriaBuilder
                 .setContentMode(.default)
+                .setDeliveryMode(.opportunistic)
                 .setIsMaximumSizeImage(false)
-               // .setIsSynchronous(true)
-                .build(media) // to get not thumb but highquality images you have setIsSynchronous to true
+                .setIsSynchronous(false)
+                .setIsNetworkAccessAllowed(true)
+                .build(media.value) { image in
+                
+                    DispatchQueue.main.async{
+                        allPhotos[idx] = image
+                        print(idx, allPhotos[idx], image)
+                    }
+                    
+                   
+                }
+        
+            count += 1
+            
+            // to get not thumb but highquality images you have setIsSynchronous to true
         
            // print(allPhotos[idx])
             
         }
+//        dispatchGroup.notify(queue: .main){
+//            print(allPhotos.count)
+//        }
         
         }
     }

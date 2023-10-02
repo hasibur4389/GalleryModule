@@ -114,8 +114,20 @@ class RequestCriteriaBuilder {
         return allMedia
     }
     
-    func build(_ media: Media)-> UIImage {
-        return media.loadImageData(requestCriteria)!
-        
+//    func build(_ media: Media)-> UIImage {
+////        guard let uiImage = media.loadImageData(requestCriteria) else{
+////            print("Found nil")
+////            return UIImage(named: "demo")!
+////        }
+//        media.loadImageData(requestCriteria) { image in
+//
+//        }
+//    }
+    
+    func build(_ media: Media, completion: @escaping (UIImage?) -> Void) {
+        media.loadImageData(requestCriteria) { image in
+            // Handle the resolved image (or nil) here
+            completion(image)
+        }
     }
 }
