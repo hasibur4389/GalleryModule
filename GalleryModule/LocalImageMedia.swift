@@ -14,7 +14,7 @@ class LocalImageMedia: Media{
     
    
     
- 
+
     let asset: PHAsset
     
     init(asset: PHAsset) {

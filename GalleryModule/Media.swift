@@ -12,6 +12,8 @@ import Photos
 
 
 protocol Media {
+    
+    
     var asset: PHAsset { get }
     
    
