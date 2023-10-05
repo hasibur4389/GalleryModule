@@ -110,7 +110,10 @@ class RequestCriteriaBuilder {
     //func 
     func build() -> [Int: Media] {
         
-        let allMedia = localImageProvider.getMediaData(fetchOptions: requestCriteria)
+//        var allMedia: [Int: Media] = [:]
+//        DispatchQueue.main.async{
+            let allMedia = self.localImageProvider.getMediaData(fetchOptions: self.requestCriteria)
+//        }
         return allMedia
     }
     

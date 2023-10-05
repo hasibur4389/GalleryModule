@@ -11,7 +11,9 @@ import SwiftUI
 struct GalleryModuleApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+           // ContentView() // main
+          //  CustomGridView()
+            TestCollectionView()
         }
     }
 }
