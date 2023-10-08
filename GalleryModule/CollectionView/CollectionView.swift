@@ -47,6 +47,8 @@ struct CollectionView: UIViewRepresentable {
 class Coordinator: NSObject, UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource {
     
      var myCollectionView: CollectionView
+     //var cellSet = Set<UUID>()
+    //var initialSize = 0
     
     init(_ myCollectionView: CollectionView) {
         self.myCollectionView = myCollectionView
@@ -55,7 +57,7 @@ class Coordinator: NSObject, UICollectionViewDelegateFlowLayout, UICollectionVie
     
  
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        print("I am here")
+      //  print("I am here")
         return myCollectionView.dataModel.allMedia.count
      
     }
@@ -69,12 +71,53 @@ class Coordinator: NSObject, UICollectionViewDelegateFlowLayout, UICollectionVie
                 // Configure your cell here (e.g., set background color, labels, etc.)
       //  cell.text = myCollectionView.myTexts[indexPath]
        // cell.setupText(text: myCollectionView.myTexts[indexPath.row])
-        cell.setupImage(localRequestCriteria: myCollectionView.dataModel.localImageRequestCriteriaBuilder, media: myCollectionView.dataModel.allMedia[indexPath.row]!)
         
+       // Task{
+        print("\(indexPath.row)")
+          //  try await
+        //cell.imageView.image = nil
+        setupImage(localRequestCriteria: myCollectionView.dataModel.localImageRequestCriteriaBuilder, media: myCollectionView.dataModel.allMedia[indexPath.row]!, _collectionView: collectionView, _indexPath: indexPath)
+           // print("here")
+      //  }
+      
+     
+    
+    
                 return cell
+    }
+    func setupImage(localRequestCriteria: RequestCriteriaBuilder, media: Media, _collectionView: UICollectionView, _indexPath: IndexPath ){
+     //   self.imageView.image = uiImage
+       
+        localRequestCriteria
+            .setContentMode(.aspectFit)
+            .setDeliveryMode(.opportunistic)
+            .setIsMaximumSizeImage(false)
+            .setIsSynchronous(false)
+            .setIsNetworkAccessAllowed(true)
+            .build(media) { image in
+              
+               // print("\(Thread.isMainThread) image count \(MyCell.count)")
+               // MyCell.count += 1
+                DispatchQueue.main.async{
+//                    if isAppeared {
+                   // self.imageView.image = image
+                    if let cell = _collectionView.cellForItem(at: _indexPath) as? MyCell {
+                        cell.imageView.image = image
+                      
+                    }
+                    
+                    MyCell.count += 1
+                        //print("done loading")
+//                    }
+                }
+
+
+            }
+        
     }
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
                 return CGSize(width: 100, height: 100)
+
             }
     
     

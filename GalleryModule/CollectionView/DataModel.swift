@@ -9,7 +9,7 @@ import Foundation
 
 class DataModel: ObservableObject{
     @Published var allMedia: [Int: Media] = [:]
-//    @State var count = 0
+    @Published var count = 0
 //    @State var scrollToIndex: Int = 0
    @Published var localImageRequestCriteriaBuilder = RequestCriteriaBuilder()
 

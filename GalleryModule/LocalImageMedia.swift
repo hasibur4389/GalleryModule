@@ -11,15 +11,18 @@ import Photos
 
 
 class LocalImageMedia: Media{
+   
     
    
     
-
+   
+    
     let asset: PHAsset
     
     init(asset: PHAsset) {
         self.asset = asset
-        
+     
+      //  self.id = LocalImageMedia.idCounter
        // super(self.asset)
     }
     
@@ -38,7 +41,7 @@ class LocalImageMedia: Media{
        
         
        
-        var count = 0
+        
       
         PHImageManager.default().requestImage(
             for: self.asset,
@@ -47,7 +50,7 @@ class LocalImageMedia: Media{
             options: options) { (image, info) in
 //                count += 1
 //                print(count)
-               // print(self.asset.localIdentifier)
+                   // print(self.asset.localIdentifier)
                completion(image)
               
                

@@ -13,7 +13,7 @@ import Photos
 
 protocol Media {
     
-    
+
     var asset: PHAsset { get }
     
    
@@ -23,3 +23,7 @@ protocol Media {
     func loadVideoData() -> AVAsset?
 }
 
+extension Media{
+    
+    
+}

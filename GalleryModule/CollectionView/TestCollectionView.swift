@@ -17,7 +17,7 @@ struct TestCollectionView: View {
     @StateObject var dataModel = DataModel()
     
     var body: some View {
-  
+        Text("Total Images \(dataModel.count)")
         CollectionView(dataModel: dataModel)
             .onAppear{
                 PHPhotoLibrary.requestAuthorization { status in
@@ -78,8 +78,10 @@ struct TestCollectionView: View {
       print("Fetching started ")
             DispatchQueue.main.async {
                 dataModel.allMedia = dataModel.localImageRequestCriteriaBuilder
-            .setFetchLimit(0)
+            .setFetchLimit(1000)
             .setPredicate(predicate)
+            .setHeight(100)
+            .setWidth(100)
             .setSortDescriptors(.byCreationDateAscending)
             .build()
             }

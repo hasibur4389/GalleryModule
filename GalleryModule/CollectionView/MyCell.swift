@@ -13,6 +13,7 @@ class MyCell: UICollectionViewCell {
     static let identifier = "myCell"
    // var uiImage: UIImage?
    // var text: String = ""
+   static var count = 0
     let imageView = UIImageView()
     var aLabel = UILabel()
     
@@ -32,19 +33,23 @@ class MyCell: UICollectionViewCell {
         imageView.leadingAnchor.constraint(equalTo: self.contentView.leadingAnchor).isActive = true
         imageView.trailingAnchor.constraint(equalTo: self.contentView.trailingAnchor).isActive = true
         imageView.bottomAnchor.constraint(equalTo: self.contentView.bottomAnchor).isActive = true
-        imageView.contentMode = .scaleAspectFit
+      //  imageView.contentMode = .scaleAspectFit
+       // imageView.clipsToBounds = true
+        //imageView.sc
+        imageView.contentMode = .scaleToFill
+        self.clipsToBounds = true
+       
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-//    func setupText(uiImage: UIImage ){
-//        self.imageView.image = uiImage
-//    }
+
     
     func setupImage(localRequestCriteria: RequestCriteriaBuilder, media: Media ){
      //   self.imageView.image = uiImage
+       
         localRequestCriteria
             .setContentMode(.default)
             .setDeliveryMode(.opportunistic)
@@ -53,10 +58,13 @@ class MyCell: UICollectionViewCell {
             .setIsNetworkAccessAllowed(true)
             .build(media) { image in
               
+               // print("\(Thread.isMainThread) image count \(MyCell.count)")
+               // MyCell.count += 1
                 DispatchQueue.main.async{
 //                    if isAppeared {
                     self.imageView.image = image
-                        print("done loading")
+                    MyCell.count += 1
+                        //print("done loading")
 //                    }
                 }
 
